@@ -7,35 +7,56 @@ namespace Pru1Aio
 
 	public partial class Pru1Aio
 	{
-        public SynchronousCallBack SynchCall;
+        public unsafe AsynchronousCallBack AsynchCall;
+
+        int Calls;
 
 		public Pru1Aio ()
 		{
             Pru1Aio.prussdrv_strversion(1);
 		}
 
-        public void Initialize()
+        public unsafe void Initialize()
         {
 
+            Calls = 1000;
 
-            SynchCall = new SynchronousCallBack(CallBack);
+            AsynchCall = new AsynchronousCallBack(CallBack);
 
-            PruSharedMemory PruMemory = Pru1Aio.pru_rta_init();
+            IntPtr prumem = Pru1Aio.pru_rta_init();
+            IntPtr cstate = Pru1Aio.pru_rta_init_call_state();
+            PruSharedMemory* PruMemory = (PruSharedMemory*)prumem.ToPointer();
+            CallState* CallState = (CallState*)cstate.ToPointer();
+            IntPtr cbuffer = Pru1Aio.pru_rta_init_capture_buffer(PruMemory);
+            Reading* Buffer = (Reading*)cbuffer.ToPointer();
 
-            PruMemory.Control.BufferSize = 40;
-            PruMemory.Control.ChannelEnabledMask = 0x7F;
-            PruMemory.Control.SampleSoc = 15;
-            PruMemory.Control.SampleAverage = 16;
-            PruMemory.Control.SampleRate = 1000;
+            PruMemory->Control.BufferSize = 40;
+            PruMemory->Control.ChannelEnabledMask = 0x7F;
+            PruMemory->Control.SampleSoc = 15;
+            PruMemory->Control.SampleAverage = 16;
+            PruMemory->Control.SampleRate = 4000;
 
-            Pru1Aio.pru_rta_configure(ref PruMemory.Control);
+            Pru1Aio.pru_rta_configure(&(PruMemory->Control));
 
-            Pru1Aio.print_pru_map(ref PruMemory);
+            Pru1Aio.print_pru_map(PruMemory);
+            Pru1Aio.print_pru_map_address(PruMemory);
 
-            Pru1Aio.print_pru_map_address(ref PruMemory);
+            Console.WriteLine("Start Firmware\n");
+            Pru1Aio.pru_rta_start_firmware();
+
+            Console.WriteLine("Start Capture\n");
+
+            Pru1Aio.pru_rta_start_capture(PruMemory, Buffer, CallState, AsynchCall);
+
+            Pru1Aio.print_pru_map(PruMemory);
         }
 
-        public void CallBack(uint BufferCount, ushort BufferSize, ref Reading[] CapturedBuffer, ref CallState CallState, ref PruSharedMemory PruMemory) {
+        public unsafe void CallBack(uint BufferCount, ushort BufferSize, Reading* CapturedBuffer, CallState* CallState, PruSharedMemory* PruMemory)
+        {
+            Calls--;
+            if (Calls == 0 )
+                Pru1Aio.pru_rta_stop_capture(PruMemory);
+
             return;
         }
 
