@@ -6,22 +6,22 @@ namespace Pru1Aio
 {
 	[StructLayout (LayoutKind.Sequential, Pack=1)]
 	public unsafe struct PruControl {
-		uint CurrentBuffer;			// 0x0		Complete
-		uint BufferCount;				// 0x4		Complete
-		byte BufferSize;				// 0x8		Complete
-		byte ChannelEnabledMask;		// 0x9		Complete
-		byte SampleAverage;			// 0xA		Complete
-		byte SampleSoc;				// 0xB		Complete
-		uint SampleRate;				// 0xC		Complete
-		byte sample_mode;				// 0x10		Complete
-		byte ChannelCount;				// 0x11		Complete
-		uint BufferMemoryBytes;		// 0X12		Complete
-		uint BufferPosition;			// 0X16		Complete
-		uint ReadCount;				// 0x1A		Complete
-		uint IepClockCount;			// 0x1E
-		uint WriteMask;				// 0x22
-		uint DigitalOut;				// 0x26
-		fixed byte Scratch[14];			// 0x2A
+		public uint CurrentBuffer;			// 0x0		Complete
+		public uint BufferCount;				// 0x4		Complete
+		public byte BufferSize;				// 0x8		Complete
+		public byte ChannelEnabledMask;		// 0x9		Complete
+		public byte SampleAverage;			// 0xA		Complete
+		public byte SampleSoc;				// 0xB		Complete
+		public uint SampleRate;				// 0xC		Complete
+		public byte SampleMode;				// 0x10		Complete
+		public byte ChannelCount;				// 0x11		Complete
+		public uint BufferMemoryBytes;		// 0X12		Complete
+		public uint BufferPosition;			// 0X16		Complete
+		public uint ReadCount;				// 0x1A		Complete
+		public uint IepClockCount;			// 0x1E
+		public uint WriteMask;				// 0x22
+		public uint DigitalOut;				// 0x26
+		public fixed byte Scratch[14];			// 0x2A
 	}
 
 	public enum Comparator {
@@ -53,43 +53,43 @@ namespace Pru1Aio
 
 	[StructLayout (LayoutKind.Sequential, Pack=1)]
 	public unsafe struct PruSharedMemory {
-		PruControl Control;
-		ushort* Buffer1;
-		ushort* Buffer2;
+		public PruControl Control;
+		public ushort* Buffer1;
+		public ushort* Buffer2;
 	}
 
 	public unsafe struct Conditional {
-		fixed char Name[33];
-		Comparator Condition;
-		Signal Signal;
-		ushort Comp1;
-		ushort Comp2;
+		public fixed char Name[33];
+		public Comparator Condition;
+		public Signal Signal;
+		public ushort Comp1;
+		public ushort Comp2;
 
-		int LastSignal;
+		public int LastSignal;
 
-		TriggerState Triggered;
-		ushort TriggerCount;
+		public TriggerState Triggered;
+		public ushort TriggerCount;
 	}
 
 	public unsafe struct Conditions {
-		char Count;
-		Conditional *Conditionals;
+		public char Count;
+		public Conditional *Conditionals;
 	}
 
 	public unsafe struct Reading {
-		byte Buffer;
-		fixed ushort Readings[8];
-		ushort DigitalIn;
+		public byte Buffer;
+		public fixed ushort Readings[8];
+		public ushort DigitalIn;
 	}
 
 	public unsafe struct CallState {
-		Reading *Readings;
-		Reading BufferMean;
-		int Records;
-		int MaximumRecords;
-		int Signals;
-		IntPtr CallerState;
-		Conditions *Conditions;
+		public Reading *Readings;
+		public Reading BufferMean;
+		public int Records;
+		public int MaximumRecords;
+		public int Signals;
+		public IntPtr CallerState;
+		public Conditions *Conditions;
 	}
 
 }

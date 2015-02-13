@@ -8,6 +8,7 @@ namespace test
 		{
 			Pru1Aio.Pru1Aio p = new Pru1Aio.Pru1Aio ();
 			p.Hello ("It Worked!");
+            p.Initialize();
 		}
 	}
 }
