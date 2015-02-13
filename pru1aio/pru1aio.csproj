@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -39,9 +39,7 @@
     <Compile Include="Pru1Aio_Extern.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Ref\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="..\..\..\pru1aio\include\pru1aio.h">
       <Link>Ref\pru1aio.h</Link>
@@ -49,5 +47,9 @@
     <None Include="..\..\..\pru1aio\pru1aio.c">
       <Link>Ref\pru1aio.c</Link>
     </None>
+    <None Include="Ref\Makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Ref\prussdrv.h" />
   </ItemGroup>
 </Project>

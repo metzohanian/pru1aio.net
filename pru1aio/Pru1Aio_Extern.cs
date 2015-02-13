@@ -9,11 +9,17 @@ namespace Pru1Aio
 
 	public partial class Pru1Aio
 	{
+        [DllImport("libprussdrv.so")]
+        private static extern int prussdrv_init();
+
+        [DllImport("libprussdrv.so")]
+        private static extern IntPtr prussdrv_strversion(int version);
+
 		[DllImport ("libpru1aio.so")]
 		private static extern void pru_rta_configure(ref PruControl Control);
 		[DllImport ("libpru1aio.so")]
 		[return : MarshalAs(UnmanagedType.LPStruct)]
-		private static extern PruControl pru_rta_init();
+		private static extern PruSharedMemory pru_rta_init();
 
 		[DllImport ("libpru1aio.so")]
 		private static extern void pru_rta_clear_pru(int PRU);
