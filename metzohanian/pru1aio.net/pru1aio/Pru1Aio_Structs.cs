@@ -5,7 +5,8 @@ using System.Text;
 namespace Pru1Aio
 {
 	[StructLayout (LayoutKind.Sequential, Pack=1)]
-	public unsafe struct PruControl {
+    public unsafe struct PruControl
+    {
 		public uint CurrentBuffer;			// 0x0		Complete
 		public uint BufferCount;				// 0x4		Complete
 		public byte BufferSize;				// 0x8		Complete
@@ -21,7 +22,8 @@ namespace Pru1Aio
 		public uint IepClockCount;			// 0x1E
 		public uint WriteMask;				// 0x22
 		public uint DigitalOut;				// 0x26
-		public fixed byte Scratch[14];			// 0x2A
+        [MarshalAs(UnmanagedType.ByValArray)]
+		public unsafe fixed byte Scratch[14];			// 0x2A
 	}
 
 	public enum Comparator {
@@ -52,14 +54,18 @@ namespace Pru1Aio
 	}
 
 	[StructLayout (LayoutKind.Sequential, Pack=1)]
-	public unsafe struct PruSharedMemory {
+    public unsafe struct PruSharedMemory
+    {
 		public PruControl Control;
 		public ushort* Buffer1;
 		public ushort* Buffer2;
 	}
 
-	public unsafe struct Conditional {
-		public fixed char Name[33];
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct Conditional
+    {
+        [MarshalAs(UnmanagedType.ByValArray)]
+		public unsafe fixed char Name[33];
 		public Comparator Condition;
 		public Signal Signal;
 		public ushort Comp1;
@@ -71,18 +77,24 @@ namespace Pru1Aio
 		public ushort TriggerCount;
 	}
 
-	public unsafe struct Conditions {
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct Conditions
+    {
 		public char Count;
 		public Conditional *Conditionals;
 	}
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public unsafe struct Reading {
 		public byte Buffer;
-		public fixed ushort Readings[8];
+        [MarshalAs(UnmanagedType.ByValArray)]
+        public unsafe fixed ushort Readings[8];
 		public ushort DigitalIn;
 	}
 
-	public unsafe struct CallState {
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct CallState
+    {
 		public Reading *Readings;
 		public Reading BufferMean;
 		public int Records;

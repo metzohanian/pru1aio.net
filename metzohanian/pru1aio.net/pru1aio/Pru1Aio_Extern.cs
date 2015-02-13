@@ -5,7 +5,7 @@ using System.Text;
 namespace Pru1Aio
 {
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	public delegate void SynchronousCallBack(uint BufferCount, ushort BufferSize, ref Reading[] CapturedBuffer, ref CallState CallState, ref PruSharedMemory PruMemory);
+    public unsafe delegate void AsynchronousCallBack(uint BufferCount, ushort BufferSize, Reading* CapturedBuffer, CallState* CallState, PruSharedMemory* PruMemory);
 
 	public partial class Pru1Aio
 	{
@@ -16,10 +16,11 @@ namespace Pru1Aio
         private static extern IntPtr prussdrv_strversion(int version);
 
 		[DllImport ("libpru1aio.so")]
-		private static extern void pru_rta_configure(ref PruControl Control);
+		private unsafe static extern void pru_rta_configure(PruControl *Control);
 		[DllImport ("libpru1aio.so")]
-		[return : MarshalAs(UnmanagedType.LPStruct)]
-		private static extern PruSharedMemory pru_rta_init();
+		private static extern IntPtr pru_rta_init();
+        [DllImport("libpru1aio.so")]
+        private unsafe static extern IntPtr pru_rta_init_capture_buffer(PruSharedMemory* PruMemory);
 
 		[DllImport ("libpru1aio.so")]
 		private static extern void pru_rta_clear_pru(int PRU);
@@ -28,29 +29,30 @@ namespace Pru1Aio
 		private static extern void pru_rta_start_firmware();
 
 		[DllImport ("libpru1aio.so")]
-		// Incomplete
-		private static extern void pru_rta_start_capture(ref PruSharedMemory PruMemory, SynchronousCallBack CallBack, ref CallState CallState);
+        private unsafe static extern void pru_rta_start_capture(PruSharedMemory* PruMemory, Reading* Buffer, CallState* CallState, AsynchronousCallBack CallBack);
 		[DllImport ("libpru1aio.so")]
-		private static extern void pru_rta_pause_capture(ref PruSharedMemory PruMemory);
+		private unsafe static extern void pru_rta_pause_capture(PruSharedMemory *PruMemory);
 		[DllImport ("libpru1aio.so")]
-		private static extern void pru_rta_stop_capture(ref PruSharedMemory PruMemory);
+		private unsafe static extern void pru_rta_stop_capture(PruSharedMemory *PruMemory);
 
 		[DllImport ("libpru1aio.so")]
-		private static extern void print_pru_map(ref PruSharedMemory PruMemory);
+		private unsafe static extern void print_pru_map(PruSharedMemory *PruMemory);
 		[DllImport ("libpru1aio.so")]
-		private static extern void print_pru_map_address(ref PruSharedMemory PruMemory);
+		private unsafe static extern void print_pru_map_address(PruSharedMemory *PruMemory);
 
-		[DllImport ("libpru1aio.so")]
-		[return : MarshalAs(UnmanagedType.LPStruct)]
-		private static extern Conditions pru_rta_init_conditions();
-		[DllImport ("libpru1aio.so")]
-		private static extern void pru_rta_destroy_conditions(ref Conditions Conditions);
-		[DllImport ("libpru1aio.so")]
+        [DllImport("libpru1aio.so")]
+        private unsafe static extern IntPtr pru_rta_init_call_state();
+        [DllImport("libpru1aio.so")]
+        private unsafe static extern void pru_rta_free_call_state(CallState* CallState);
+
+        [DllImport("libpru1aio.so")]
 		private static extern void pru_rta_add_condition(ref Conditions Conditions, string Name, Comparator Condition, Signal Signal, ushort Comp1, ushort Comp2);
 
 		[DllImport ("libpru1aio.so")]
 		private static extern void pru_printf_hello(string world);
 
-
+        [DllImport("libpru1aio.so")]
+//        private unsafe static extern void pru_rta_test_callback(PruSharedMemory* PruMemory, [MarshalAs(UnmanagedType.LPArray)] Reading[] Buffer, CallState* CallState, AsynchronousCallBack CallBac);
+        private unsafe static extern void pru_rta_test_callback(PruSharedMemory* PruMemory, Reading* Buffer, CallState* CallState, AsynchronousCallBack CallBac);
 	}
 }
