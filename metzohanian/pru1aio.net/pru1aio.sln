@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pru1aio", "pru1aio\pru1aio.csproj", "{863510C4-8576-44AB-9565-627DCAB3D13F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{4F676722-E5A6-4470-9112-744363038242}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F676722-E5A6-4470-9112-744363038242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F676722-E5A6-4470-9112-744363038242}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F676722-E5A6-4470-9112-744363038242}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F676722-E5A6-4470-9112-744363038242}.Release|Any CPU.Build.0 = Release|Any CPU
+		{863510C4-8576-44AB-9565-627DCAB3D13F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{863510C4-8576-44AB-9565-627DCAB3D13F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{863510C4-8576-44AB-9565-627DCAB3D13F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{863510C4-8576-44AB-9565-627DCAB3D13F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
