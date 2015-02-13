@@ -7,7 +7,6 @@ namespace test
 		public static void Main (string[] args)
 		{
 			Pru1Aio.Pru1Aio p = new Pru1Aio.Pru1Aio ();
-			p.Hello ("It Worked!");
             p.Initialize();
 		}
 	}

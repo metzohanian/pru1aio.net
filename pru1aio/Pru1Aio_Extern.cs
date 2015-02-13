@@ -34,6 +34,8 @@ namespace Pru1Aio
 		private unsafe static extern void pru_rta_pause_capture(PruSharedMemory *PruMemory);
 		[DllImport ("libpru1aio.so")]
 		private unsafe static extern void pru_rta_stop_capture(PruSharedMemory *PruMemory);
+        [DllImport("libpru1aio.so")]
+        private unsafe static extern void pru_rta_set_digital_out(PruSharedMemory* PruMemory, uint WriteMask, uint DigitalOut);
 
 		[DllImport ("libpru1aio.so")]
 		private unsafe static extern void print_pru_map(PruSharedMemory *PruMemory);
