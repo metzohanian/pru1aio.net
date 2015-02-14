@@ -21,9 +21,9 @@ namespace test
             if (p.DroppedBuffers.Count > 0)
                 p.DroppedBuffers.ForEach(Console.WriteLine);
 
-            p.Configure(40, Pru1Aio.Channels.AllChannels, 15, 16, 4000);
+            p.Configure(20, Pru1Aio.Channels.AllChannels, 15, 16, 4000);
             p.PrintControl();
-            p.Start(1000);
+            p.Start(1000, 200, Pru1Aio.BufferMode.Ring);
             if (p.DroppedBuffers.Count > 0)
                 p.DroppedBuffers.ForEach(Console.WriteLine);
 
