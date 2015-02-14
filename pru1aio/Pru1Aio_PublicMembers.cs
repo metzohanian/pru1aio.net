@@ -8,7 +8,7 @@ namespace Pru1Aio
 
     public partial class Pru1Aio
     {
-        public List<int> DroppedBuffers
+        public static List<int> DroppedBuffers
         {
             get
             {
@@ -16,7 +16,7 @@ namespace Pru1Aio
             }
         }
 
-        public bool IsCapturing
+        public static bool IsCapturing
         {
             get
             {
