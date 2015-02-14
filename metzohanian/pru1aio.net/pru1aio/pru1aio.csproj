@@ -36,6 +36,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pru1Aio.cs" />
     <Compile Include="Pru1Aio_Enum.cs" />
+    <Compile Include="Pru1Aio_PublicMembers.cs" />
     <Compile Include="Pru1Aio_Structs.cs" />
     <Compile Include="Pru1Aio_Extern.cs" />
   </ItemGroup>
