@@ -35,6 +35,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pru1Aio.cs" />
+    <Compile Include="Pru1Aio_Enum.cs" />
     <Compile Include="Pru1Aio_Structs.cs" />
     <Compile Include="Pru1Aio_Extern.cs" />
   </ItemGroup>
@@ -48,6 +49,7 @@
       <Link>Ref\pru1aio.c</Link>
     </None>
     <None Include="Ref\Makefile" />
+    <None Include="Ref\pru1aio.p" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Ref\prussdrv.h" />

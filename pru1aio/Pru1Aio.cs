@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Pru1Aio
 {
@@ -10,83 +11,180 @@ namespace Pru1Aio
         public unsafe AsynchronousCallBack AsynchCall;
 
         int Calls;
-        int CallsPerUpdate;
+        int RunTimeMs;
         int CurrentRecord;
+        int Signals;
+        int LastBufferCount;
+        List<int> _DroppedBuffers;
+        public List<int> DroppedBuffers
+        {
+            get
+            {
+                return _DroppedBuffers;
+            }
+        }
+
+        bool _capturing;
+        bool _IsCapturing
+        {
+            get
+            {
+                return _capturing;
+            }
+            set
+            {
+                _capturing = value;
+            }
+        }
+        public bool IsCapturing
+        {
+            get
+            {
+                return _IsCapturing;
+            }
+        }
+
+        BufferMode Mode;
+        bool RunLimit;
+
         Reading[] Readings;
+
+        unsafe PruSharedMemory* PruMemory;
+        unsafe CallState* CallState;
+        unsafe Reading* Buffer;
+
+        unsafe IntPtr IPruMem;
+        unsafe IntPtr ICallState;
+        unsafe IntPtr IBuffer;
 
 		public Pru1Aio ()
 		{
+            // forces libprussdrv to load
             Pru1Aio.prussdrv_strversion(1);
-		}
+        }
+
+        public unsafe void Start(int RunTimeMs = 2000, int Readings = 0, BufferMode Mode = BufferMode.Fill)
+        {
+            this.Mode = Mode;
+            this.RunTimeMs = RunTimeMs;
+            RunLimit = false;
+
+            if (Readings % PruMemory->Control.BufferSize != 0)
+                throw new Exception("Readings must be a multiple of the buffer size.  Inter-buffer reading limits are not supported.");
+
+            if (this.Mode == BufferMode.Fill)
+            {
+                RunLimit = true;
+                if (RunTimeMs == 0 && Readings == 0)
+                {
+                    Pru1Aio.pru_rta_stop_capture(PruMemory);
+                    Pru1Aio.pru_rta_clear_pru((int)PRU_NUM.PRU1);
+                    Pru1Aio.pru_rta_clear_pru((int)PRU_NUM.PRU0);
+                    return;
+                }
+                if (RunTimeMs > 0)
+                {
+                    this.Readings = new Reading[RunTimeMs / 1000 * PruMemory->Control.SampleRate];
+                    Calls = (int)(PruMemory->Control.SampleRate / PruMemory->Control.BufferSize * RunTimeMs / 1000);
+                }
+                else if (Readings > 0)
+                {
+                    this.Readings = new Reading[Readings];
+                    Calls = Readings / PruMemory->Control.BufferSize;
+                }
+            }
+
+            _DroppedBuffers = new List<int>();
+
+            Pru1Aio.pru_rta_configure(&(PruMemory->Control));
+
+            Pru1Aio.pru_rta_start_firmware();
+
+            Signals = 0;
+            _IsCapturing = true;
+            Pru1Aio.pru_rta_start_capture(PruMemory, Buffer, CallState, AsynchCall);
+        }
+
+        public unsafe void PrintControl(bool Addresses = false)
+        {
+            if (Addresses)
+                Pru1Aio.print_pru_map_address(PruMemory);
+            else
+                Pru1Aio.print_pru_map(PruMemory);
+        }
 
         public unsafe void Initialize()
         {
 
+            IPruMem = Pru1Aio.pru_rta_init();
+            ICallState = Pru1Aio.pru_rta_init_call_state();
+            PruMemory = (PruSharedMemory*)IPruMem.ToPointer();
+            CallState = (CallState*)ICallState.ToPointer();
+            _IsCapturing = false;
+        }
+
+        public unsafe void Configure(int BufferSize, Channels ChannelEnabledMask, int SampleSoc, int SampleAverage, int SampleRate)
+        {
+            _IsCapturing = false;
+
             AsynchCall = new AsynchronousCallBack(CallBack);
 
-            IntPtr prumem = Pru1Aio.pru_rta_init();
-            IntPtr cstate = Pru1Aio.pru_rta_init_call_state();
-            PruSharedMemory* PruMemory = (PruSharedMemory*)prumem.ToPointer();
-            CallState* CallState = (CallState*)cstate.ToPointer();
-            IntPtr cbuffer = Pru1Aio.pru_rta_init_capture_buffer(PruMemory);
-            Reading* Buffer = (Reading*)cbuffer.ToPointer();
+            PruMemory->Control.BufferSize = (byte)BufferSize; // 40;
+            PruMemory->Control.ChannelEnabledMask = (byte)ChannelEnabledMask; // 0x7F;
+            PruMemory->Control.SampleSoc = (byte)SampleSoc; // 15;
+            PruMemory->Control.SampleAverage = (byte)SampleAverage; // 16;
+            PruMemory->Control.SampleRate = (uint)SampleRate; // 1000;
 
-            PruMemory->Control.BufferSize = 40;
-            PruMemory->Control.ChannelEnabledMask = 0x7F;
-            PruMemory->Control.SampleSoc = 15;
-            PruMemory->Control.SampleAverage = 16;
-            PruMemory->Control.SampleRate = 2000;
+            IBuffer = Pru1Aio.pru_rta_init_capture_buffer(PruMemory);
+            Buffer = (Reading*)IBuffer.ToPointer();
 
-            int seconds = 5;
-            Readings = new Reading[seconds * PruMemory->Control.SampleRate];
-
-            Calls = (int)(PruMemory->Control.SampleRate / PruMemory->Control.BufferSize * seconds);
-            CallsPerUpdate = (int)((PruMemory->Control.SampleRate / PruMemory->Control.BufferSize) / 2);
-
-            Pru1Aio.pru_rta_configure(&(PruMemory->Control));
-
-            Pru1Aio.print_pru_map(PruMemory);
-            Pru1Aio.print_pru_map_address(PruMemory);
-
-            Console.WriteLine("Start Firmware\n");
-            Pru1Aio.pru_rta_start_firmware();
-
-            Console.WriteLine("Start Capture\n");
-            Pru1Aio.pru_rta_start_capture(PruMemory, Buffer, CallState, AsynchCall);
         }
 
         public unsafe void CallBack(uint BufferCount, ushort BufferSize, Reading* CapturedBuffer, CallState* CallState, PruSharedMemory* PruMemory)
         {
+            Signals++;
+            LastBufferCount = (int)PruMemory->Control.BufferCount;
+
+            if (Signals < LastBufferCount)
+            {
+                do
+                {
+                    _DroppedBuffers.Add(Signals);
+                    Signals++;
+                } while (Signals < LastBufferCount);
+            }
+            
             Pru1Aio.pru_rta_set_digital_out(PruMemory, 0xF, 0xA);
 
-            for (int record = 0; record < BufferSize; record++)
+            if (IsCapturing)
             {
-                for (int channel = 0; channel < PruMemory->Control.ChannelCount; channel++)
+                for (int record = 0; record < BufferSize; record++)
                 {
-                    fixed (Reading* readings = Readings) {
-                        readings[CurrentRecord].Readings[channel] = CapturedBuffer[record].Readings[channel];
+                    for (int channel = 0; channel < PruMemory->Control.ChannelCount; channel++)
+                    {
+                        fixed (Reading* readings = Readings)
+                        {
+                            //readings[CurrentRecord].Readings[channel] = CapturedBuffer[record].Readings[channel];
+                        }
                     }
+                    //Readings[CurrentRecord].DigitalIn = CapturedBuffer[record].DigitalIn;
+                    //Readings[CurrentRecord].Buffer = CapturedBuffer[record].Buffer;
+                    CurrentRecord++;
                 }
-                Readings[CurrentRecord].DigitalIn = CapturedBuffer[record].DigitalIn;
-                Readings[CurrentRecord].Buffer = CapturedBuffer[record].Buffer;
-                CurrentRecord++;
             }
-            Calls--;
 
-            string output = "";
-            if (Calls % CallsPerUpdate == 0)
+            if (RunLimit)
             {
-                for (int channel = 0; channel < PruMemory->Control.ChannelCount; channel++)
-                {
-                    output += channel + ":" + CallState->BufferMean.Readings[channel].ToString("X") + ",";
-                }
-                output += "D:" + CallState->BufferMean.DigitalIn.ToString("X");
-                Console.WriteLine(output);
+                _IsCapturing = false;
+
+                Calls--;
+                if (Calls == 0)
+                    Pru1Aio.pru_rta_stop_capture(PruMemory);
+
+                if (CurrentRecord >= Readings.Length)
+                    Pru1Aio.pru_rta_stop_capture(PruMemory);
             }
-
-            if (Calls == 0 )
-                Pru1Aio.pru_rta_stop_capture(PruMemory);
-
+            
             return;
         }
 
