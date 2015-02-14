@@ -26,32 +26,6 @@ namespace Pru1Aio
 		public unsafe fixed byte Scratch[14];			// 0x2A
 	}
 
-	public enum Comparator {
-		Greater = 0,
-		GreaterEq,
-		Less,
-		LessEq,
-		Equal,
-		RisingEdge,
-		FallingEdge
-	}
-
-	public enum Signal {
-		CHANNEL_0 = 0,
-		CHANNEL_1,
-		CHANNEL_2,
-		CHANNEL_3,
-		CHANNEL_4,
-		CHANNEL_5,
-		CHANNEL_6,
-		CHANNEL_7,
-		CHANNEL_DIO
-	}
-
-	public enum TriggerState {
-		NOT_TRIGGERED = 0,
-		TRIGGERED
-	}
 
 	[StructLayout (LayoutKind.Sequential, Pack=1)]
     public unsafe struct PruSharedMemory
