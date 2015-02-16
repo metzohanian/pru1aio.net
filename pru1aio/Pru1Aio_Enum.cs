@@ -10,6 +10,15 @@ namespace Pru1Aio
         Panic
     }
 
+    public enum InitMode
+    {
+        NotReady,
+        Initialized,
+        Configured,
+        Running,
+        Stopped
+    }
+
     public enum BufferMode
     {
         Fill,
