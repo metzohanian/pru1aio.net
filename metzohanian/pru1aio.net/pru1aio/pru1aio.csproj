@@ -33,6 +33,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Conditions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pru1Aio.cs" />
     <Compile Include="Pru1Aio_Enum.cs" />

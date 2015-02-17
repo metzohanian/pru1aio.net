@@ -8,21 +8,7 @@ namespace Pru1Aio
 
     public partial class Pru1Aio
     {
-        public static List<int> DroppedBuffers
-        {
-            get
-            {
-                return _DroppedBuffers;
-            }
-        }
 
-        public static bool IsCapturing
-        {
-            get
-            {
-                return _IsCapturing;
-            }
-        }
 
     }
 
