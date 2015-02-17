@@ -1,9 +1,29 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Collections.Generic;
+
 
 namespace Pru1Aio
 {
+    public class Pru1AioEventArgs : EventArgs
+    {
+        public readonly MessageType Type;
+        public readonly Reading MeanReading;
+        public readonly bool WarmUp;
+        public readonly int BufferStartIndex;
+        public readonly int BufferSize;
+
+        public Pru1AioEventArgs(MessageType Type, Reading MeanReading, bool WarmUp, int BufferStartIndex, int BufferSize)
+        {
+            this.Type = Type;
+            this.MeanReading = MeanReading;
+            this.WarmUp = WarmUp;
+            this.BufferStartIndex = BufferStartIndex;
+            this.BufferSize = BufferSize;
+        }
+    }
+
 	[StructLayout (LayoutKind.Sequential, Pack=1)]
     public unsafe struct PruControl
     {
@@ -36,7 +56,7 @@ namespace Pru1Aio
 	}
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public unsafe struct Conditional
+    public unsafe struct Pru1AioConditional
     {
         [MarshalAs(UnmanagedType.ByValArray)]
 		public unsafe fixed char Name[33];
@@ -52,14 +72,14 @@ namespace Pru1Aio
 	}
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public unsafe struct Conditions
+    public unsafe struct Pru1AioConditions
     {
 		public char Count;
-		public Conditional *Conditionals;
+		public Pru1AioConditional *Conditionals;
 	}
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-	public unsafe struct Reading {
+	public unsafe struct Pru1AioReading {
 		public byte Buffer;
         [MarshalAs(UnmanagedType.ByValArray)]
         public unsafe fixed ushort Readings[8];
@@ -69,13 +89,42 @@ namespace Pru1Aio
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct CallState
     {
-		public Reading *Readings;
-		public Reading BufferMean;
+		public Pru1AioReading *Readings;
+		public Pru1AioReading BufferMean;
 		public int Records;
 		public int MaximumRecords;
 		public int Signals;
 		public IntPtr CallerState;
-		public Conditions *Conditions;
+		public Pru1AioConditions *Conditions;
 	}
+
+    public class Reading
+    {
+        public byte Buffer;
+        public ushort[] Readings;
+        public ushort DigitalIn;
+
+        public Reading()
+        {
+            Readings = new ushort[8];
+        }
+    }
+
+    public struct Conditional
+    {
+        public string Name;
+        public Comparator Condition;
+        public Signal Signal;
+        public ushort Comparator1;
+        public ushort Comparator2;
+        public TriggerState Triggered;
+        public int Triggers;
+        public uint LastSignal;
+
+        public override string ToString()
+        {
+            return Name + ":\n\t" + Condition.ToString() + "\n\t" + Signal + "\n\t" + Comparator1 + "\n\t" + Comparator2;
+        }
+    }
 
 }

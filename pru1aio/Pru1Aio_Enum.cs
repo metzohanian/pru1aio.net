@@ -4,6 +4,16 @@ using System.Text;
 
 namespace Pru1Aio
 {
+    public enum MessageType
+    {
+        Start,
+        Stop,
+        Notification,
+        Overflow,
+        Underflow,
+        Ring
+    }
+
     public enum UnderflowMode
     {
         Continue,
@@ -15,8 +25,7 @@ namespace Pru1Aio
         NotReady,
         Initialized,
         Configured,
-        Running,
-        Stopped
+        Running
     }
 
     public enum BufferMode

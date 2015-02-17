@@ -5,7 +5,7 @@ using System.Text;
 namespace Pru1Aio
 {
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public unsafe delegate void AsynchronousCallBack(uint BufferCount, ushort BufferSize, Reading* CapturedBuffer, CallState* CallState, PruSharedMemory* PruMemory);
+    public unsafe delegate void AsynchronousCallBack(uint BufferCount, ushort BufferSize, Pru1AioReading* CapturedBuffer, CallState* CallState, PruSharedMemory* PruMemory);
 
 	public partial class Pru1Aio
 	{
@@ -29,7 +29,7 @@ namespace Pru1Aio
 		private static extern void pru_rta_start_firmware();
 
 		[DllImport ("libpru1aio.so")]
-        private unsafe static extern void pru_rta_start_capture(PruSharedMemory* PruMemory, Reading* Buffer, CallState* CallState, AsynchronousCallBack CallBack);
+        private unsafe static extern void pru_rta_start_capture(PruSharedMemory* PruMemory, Pru1AioReading* Buffer, CallState* CallState, AsynchronousCallBack CallBack);
 		[DllImport ("libpru1aio.so")]
 		private unsafe static extern void pru_rta_stop_capture(PruSharedMemory *PruMemory);
         [DllImport("libpru1aio.so")]
@@ -46,13 +46,13 @@ namespace Pru1Aio
         private unsafe static extern void pru_rta_free_call_state(CallState* CallState);
 
         [DllImport("libpru1aio.so")]
-		private static extern void pru_rta_add_condition(ref Conditions Conditions, string Name, Comparator Condition, Signal Signal, ushort Comp1, ushort Comp2);
+		private static extern void pru_rta_add_condition(ref Pru1AioConditions Conditions, string Name, Comparator Condition, Signal Signal, ushort Comp1, ushort Comp2);
 
 		[DllImport ("libpru1aio.so")]
 		private static extern void pru_printf_hello(string world);
 
         [DllImport("libpru1aio.so")]
 //        private unsafe static extern void pru_rta_test_callback(PruSharedMemory* PruMemory, [MarshalAs(UnmanagedType.LPArray)] Reading[] Buffer, CallState* CallState, AsynchronousCallBack CallBac);
-        private unsafe static extern void pru_rta_test_callback(PruSharedMemory* PruMemory, Reading* Buffer, CallState* CallState, AsynchronousCallBack CallBac);
+        private unsafe static extern void pru_rta_test_callback(PruSharedMemory* PruMemory, Pru1AioReading* Buffer, CallState* CallState, AsynchronousCallBack CallBac);
 	}
 }
