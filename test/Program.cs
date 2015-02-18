@@ -63,9 +63,9 @@ namespace test
             {
                 System.Threading.Thread.Sleep(50);
             }
-            while (Pru1Aio.Pru1Aio.TotalRecords < 1000)
+            while (Pru1Aio.Pru1Aio.TotalRecords < 4000)
             {
-                if (Pru1Aio.Pru1Aio.TotalRecords > 400)
+                if (Pru1Aio.Pru1Aio.TotalRecords > 1200)
                     Pru1Aio.Pru1Aio.DigitalOutput = 0xFF;
                 System.Threading.Thread.Sleep(50);
             }
@@ -126,9 +126,9 @@ namespace test
             Pru1Aio.Conditions PruTriggers = new Pru1Aio.Conditions();
             PruTriggers.Add(new Pru1Aio.Conditional()
             {
-                Name = "Check AI[0] for > 3800",
+                Name = "Check AI[0] for > 3600",
                 Condition = Pru1Aio.Comparator.Greater,
-                Comparator1 = 3800,
+                Comparator1 = 3600,
                 Signal = Pru1Aio.Signal.CHANNEL_0
             });
             PruTriggers.Add(new Pru1Aio.Conditional()
@@ -139,12 +139,12 @@ namespace test
                 Signal = Pru1Aio.Signal.CHANNEL_DIO
             });
             PruTriggers.Triggered += PruTriggers_Triggered;
-            PruTriggers.CheckEach = true;
+            PruTriggers.CheckEach = false;
 
             Reset();
             TestStopDelegate dlgt = new TestStopDelegate(TestStop);
             dlgt.BeginInvoke(null, null);
-            Pru1Aio.Pru1Aio.Configure(40, Pru1Aio.Channels.AllChannels, 15, 16, 1000);
+            Pru1Aio.Pru1Aio.Configure(40, Pru1Aio.Channels.AllChannels, 15, 16, 4000);
             Pru1Aio.Pru1Aio.PrintControl();
             Console.WriteLine("Calls: " + Pru1Aio.Pru1Aio.Calls);
             Pru1Aio.Pru1Aio.Start(0, 1000, Pru1Aio.BufferMode.Ring);
@@ -157,7 +157,8 @@ namespace test
 
         static void PruTriggers_Triggered(List<Pru1Aio.Conditional> ConditionsTriggered)
         {
-            Console.WriteLine(ConditionsTriggered[0].Name + " triggered [" + ConditionsTriggered[0].Triggers + "]");
+            foreach (Pru1Aio.Conditional triggered in ConditionsTriggered)
+                Console.WriteLine(triggered.Name + " triggered [" + triggered.Triggers + "]");
         }
 	}
 

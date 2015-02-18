@@ -75,6 +75,7 @@ namespace Pru1Aio
             {
                 signal = (uint)MeanReading.Readings[(int)Condition.Condition];
             }
+            uint lastsignal = Condition.LastSignal;
             Condition.LastSignal = signal;
             switch (Condition.Condition)
             {
@@ -83,8 +84,8 @@ namespace Pru1Aio
                 case Comparator.Less: return signal < Condition.Comparator1;
                 case Comparator.LessEq: return signal <= Condition.Comparator1;
                 case Comparator.Equal: return signal == Condition.Comparator1;
-                case Comparator.RisingEdge: return signal == 1 && Condition.LastSignal == 0;
-                case Comparator.FallingEdge: return signal == 0 && Condition.LastSignal == 1;
+                case Comparator.RisingEdge: return signal == 1 && lastsignal == 0;
+                case Comparator.FallingEdge: return signal == 0 && lastsignal == 1;
             }
             return false;
         }
