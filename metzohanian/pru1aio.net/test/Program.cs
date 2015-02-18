@@ -65,6 +65,8 @@ namespace test
             }
             while (Pru1Aio.Pru1Aio.TotalRecords < 1000)
             {
+                if (Pru1Aio.Pru1Aio.TotalRecords > 400)
+                    Pru1Aio.Pru1Aio.DigitalOutput = 0xFF;
                 System.Threading.Thread.Sleep(50);
             }
             Console.WriteLine("Pru1Aio.Stop()");
@@ -83,7 +85,6 @@ namespace test
             };
 
             Pru1Aio.Pru1Aio.WarmUp();
-
             /*
             Reset();
             Pru1Aio.Pru1Aio.Configure(10, Pru1Aio.Channels.AllChannels, 15, 16, 1000);
@@ -113,6 +114,7 @@ namespace test
             Console.WriteLine("Total Records: " + Pru1Aio.Pru1Aio.TotalRecords);
 
             Reset();
+            Pru1Aio.Pru1Aio.DigitalOutput = 0x0;
             Pru1Aio.Pru1Aio.Configure(10, Pru1Aio.Channels.AllChannels, 15, 16, 1000);
             Pru1Aio.Pru1Aio.PrintControl();
             Console.WriteLine("Calls: " + Pru1Aio.Pru1Aio.Calls);
