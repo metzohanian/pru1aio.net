@@ -85,7 +85,7 @@ namespace test
             };
 
             Pru1Aio.Pru1Aio.WarmUp();
-            /*
+
             Reset();
             Pru1Aio.Pru1Aio.Configure(10, Pru1Aio.Channels.AllChannels, 15, 16, 1000);
             Pru1Aio.Pru1Aio.PrintControl();
@@ -122,18 +122,18 @@ namespace test
             if (Pru1Aio.Pru1Aio.DroppedBuffers.Count > 0)
                 Pru1Aio.Pru1Aio.DroppedBuffers.ForEach(Console.WriteLine);
             Console.WriteLine("Total Records: " + Pru1Aio.Pru1Aio.TotalRecords);
-            */
+
             Pru1Aio.Conditions PruTriggers = new Pru1Aio.Conditions();
             PruTriggers.Add(new Pru1Aio.Conditional()
             {
-                Name = "Check AI[0] for > 3600",
+                Name = "Check AI[0] for > 3600 (Assumes AIs are wired in parallel and floating between 3300 to 3900 ... YMMV)",
                 Condition = Pru1Aio.Comparator.Greater,
                 Comparator1 = 3600,
                 Signal = Pru1Aio.Signal.CHANNEL_0
             });
             PruTriggers.Add(new Pru1Aio.Conditional()
             {
-                Name = "Check for DI[0] Rising",
+                Name = "Check for DI[0] Rising (Assumes R0[0..3] are wired to R31[0..3])",
                 Condition = Pru1Aio.Comparator.RisingEdge,
                 Comparator1 = 0,
                 Signal = Pru1Aio.Signal.CHANNEL_DIO
