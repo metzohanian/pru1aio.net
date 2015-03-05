@@ -341,8 +341,6 @@ namespace Pru1Aio
                 } while (Signals < LastBufferCount);
             }
 
-            MessageInvoker(MessageType.Notification, mread, CurrentBufferIndex, (int)BufferSize);
-
             Pru1Aio.pru_rta_set_digital_out(PruMemory, 0xF, _DigitalOutput);
 
             if (IsCapturing && Status == InitMode.Running)
@@ -379,6 +377,8 @@ namespace Pru1Aio
                     _TotalRecords++;
                 }
             }
+
+            MessageInvoker(MessageType.Notification, mread, CurrentBufferIndex, (int)BufferSize);
 
             if (RunLimit)
             {

@@ -19,7 +19,7 @@ namespace Pru1Aio
             this.Type = Type;
             this.MeanReading = MeanReading;
             this.WarmUp = WarmUp;
-            this.BufferStartIndex = BufferStartIndex;
+            this.BufferStartIndex = BufferStartIndex - BufferSize;
             this.BufferSize = BufferSize;
         }
     }
