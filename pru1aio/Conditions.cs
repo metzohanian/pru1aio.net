@@ -33,6 +33,11 @@ namespace Pru1Aio
             Conditionals.Remove(Condition);
         }
 
+        public void Clear()
+        {
+            Conditionals.Clear();
+        }
+
         public void Subscriber(object sender, Pru1AioEventArgs e)
         {
             if (e.WarmUp || e.Type != MessageType.Notification)
