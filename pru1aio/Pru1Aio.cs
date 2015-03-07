@@ -85,6 +85,11 @@ namespace Pru1Aio
             }
         }
 
+        public static void SetDigitalOutputBit(int bit, bool Value) {
+            uint d = DigitalOutput;
+            DigitalOutput = Value ? (d | (uint)(0x1 << bit)) : (d & ~((uint)(0x1 << bit)));
+        }
+
         public static Reading MeanReading
         {
             get
